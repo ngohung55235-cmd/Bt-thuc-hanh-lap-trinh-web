@@ -1,0 +1,52 @@
+@model NgoManhHung_Tuan345.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa sản phẩm - " + Model.Name;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Xác nhận xóa sản phẩm</h4>
+                </div>
+                <div class="card-body text-center">
+                    <p class="fs-5 mb-4">Bạn có chắc chắn muốn xóa sản phẩm sau đây không?</p>
+                    
+                    <div class="p-3 mb-4 bg-light rounded border text-start">
+                        <div class="row align-items-center">
+                            <div class="col-4 text-center">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img src="@Model.ImageUrl" alt="@Model.Name" class="img-thumbnail" style="max-height: 100px; max-width: 120px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <div class="bg-light text-secondary d-flex justify-content-center align-items-center rounded border" style="width: 80px; height: 80px; margin: 0 auto;">
+                                        <i class="bi bi-image" style="font-size: 32px;"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-8">
+                                <h4 class="text-primary fw-bold mb-1">@Model.Name</h4>
+                                <h5 class="text-danger fw-bold">Giá: @Model.Price.ToString("#,##0") đ</h5>
+                                <span class="badge bg-secondary">Danh mục: @(Model.Category?.Name ?? "Chưa phân loại")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                            <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xác nhận xóa</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

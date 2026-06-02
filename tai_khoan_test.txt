@@ -1,0 +1,30 @@
+DANH SÁCH TÀI KHOẢN VÀ MẬT KHẨU DÙNG ĐỂ THỬ NGHIỆM HỆ THỐNG
+(Vui lòng đăng ký các tài khoản này trên giao diện web trước khi đăng nhập)
+
+----------------------------------------------------------------------
+1. TÀI KHOẢN QUẢN TRỊ VIÊN (ADMIN)
+- Email: admin@shop.com
+- Mật khẩu: Admin@Password123
+- Họ và tên: Quản Trị Viên
+- Địa chỉ: Hà Nội
+- Tuổi: 28
+- Vai trò đăng ký chọn: Admin
+-> Có quyền vào quản lý sản phẩm và danh mục sản phẩm (CRUD).
+
+----------------------------------------------------------------------
+2. TÀI KHOẢN KHÁCH HÀNG (CUSTOMER)
+- Email: customer@shop.com
+- Mật khẩu: Customer@Password123
+- Họ và tên: Khách Hàng Thử Nghiệm
+- Địa chỉ: Hồ Chí Minh
+- Tuổi: 22
+- Vai trò đăng ký chọn: Customer
+-> Chỉ xem được trang chủ, sẽ bị chặn (Access Denied) nếu vào trang quản lý của Admin.
+
+----------------------------------------------------------------------
+Lưu ý về mật khẩu của ASP.NET Core Identity:
+Mật khẩu bắt buộc phải có ít nhất 6 ký tự, bao gồm:
+- Ít nhất 1 chữ hoa (A-Z)
+- Ít nhất 1 chữ thường (a-z)
+- Ít nhất 1 chữ số (0-9)
+- Ít nhất 1 ký tự đặc biệt (!, @, #, $, %,...)

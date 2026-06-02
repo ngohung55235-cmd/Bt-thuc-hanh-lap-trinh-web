@@ -1,0 +1,74 @@
+@model IEnumerable<NgoManhHung_Tuan345.Models.Product>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="bi bi-box-seam"></i> Danh sách sản phẩm</h2>
+        <a asp-action="Add" class="btn btn-success"><i class="bi bi-plus-circle"></i> Thêm sản phẩm mới</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            Chưa có sản phẩm nào. Hãy nhấn vào nút "Thêm sản phẩm mới" để tạo.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" style="width: 100px;">Hình ảnh</th>
+                            <th scope="col">Tên sản phẩm</th>
+                            <th scope="col">Giá bán</th>
+                            <th scope="col">Mô tả</th>
+                            <th scope="col">Danh mục</th>
+                            <th scope="col" class="text-center" style="width: 250px;">Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Name" class="img-thumbnail" style="max-height: 70px; max-width: 90px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light text-secondary d-flex justify-content-center align-items-center rounded border" style="width: 70px; height: 70px;">
+                                            <i class="bi bi-image" style="font-size: 24px;"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="fw-bold">@item.Name</td>
+                                <td class="text-danger fw-bold">@item.Price.ToString("#,##0") đ</td>
+                                <td>
+                                    <span class="text-muted d-inline-block text-truncate" style="max-width: 250px;">
+                                        @item.Description
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">@(item.Category?.Name ?? "Chưa phân loại")</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Display" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm"><i class="bi bi-eye"></i> Xem</a>
+                                        <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i> Sửa</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Xóa</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
