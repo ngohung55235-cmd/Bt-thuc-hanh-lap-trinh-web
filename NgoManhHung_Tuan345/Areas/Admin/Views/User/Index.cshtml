@@ -1,0 +1,117 @@
+@model IEnumerable<NgoManhHung_Tuan345.Areas.Admin.Controllers.UserManagementViewModel>
+@{
+    ViewData["Title"] = "Quản lý Người dùng";
+}
+
+<div class="container mt-4">
+    <!-- Success/Error Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold"><i class="bi bi-people-fill"></i> Quản lý thành viên</h2>
+        <span class="badge bg-secondary p-2">Tổng số: @Model.Count() thành viên</span>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="table-responsive rounded-4">
+            <table class="table table-hover table-striped mb-0 align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" style="padding-left: 20px;">Họ và Tên</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Địa chỉ</th>
+                        <th scope="col">Tuổi</th>
+                        <th scope="col">Vai trò (Role)</th>
+                        <th scope="col" class="text-center">Trạng thái</th>
+                        <th scope="col" class="text-center" style="width: 320px; padding-right: 20px;">Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold" style="padding-left: 20px;">
+                                <i class="bi bi-person-circle text-secondary me-2"></i>@user.FullName
+                            </td>
+                            <td>@user.Email</td>
+                            <td>@(string.IsNullOrEmpty(user.Address) ? "Chưa có" : user.Address)</td>
+                            <td>@(string.IsNullOrEmpty(user.Age) ? "Chưa có" : user.Age)</td>
+                            <td>
+                                @if (user.Roles.Contains("Admin"))
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-shield-fill-check"></i> Admin</span>
+                                }
+                                else if (user.Roles.Contains("Employee"))
+                                {
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-person-badge"></i> Employee</span>
+                                }
+                                else if (user.Roles.Contains("Company"))
+                                {
+                                    <span class="badge bg-info text-dark"><i class="bi bi-building"></i> Company</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary"><i class="bi bi-person"></i> Customer</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (user.IsLocked)
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle"><i class="bi bi-lock-fill"></i> Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-unlock-fill"></i> Hoạt động</span>
+                                }
+                            </td>
+                            <td class="text-center" style="padding-right: 20px;">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <!-- Edit Role button -->
+                                    <a asp-action="EditRole" asp-route-id="@user.Id" class="btn btn-outline-primary btn-sm rounded-3">
+                                        <i class="bi bi-shield-lock-fill"></i> Phân quyền
+                                    </a>
+
+                                    <!-- Lock/Unlock button -->
+                                    <form asp-action="LockUnlock" asp-route-id="@user.Id" method="post" class="d-inline">
+                                        @if (user.IsLocked)
+                                        {
+                                            <button type="submit" class="btn btn-outline-success btn-sm rounded-3">
+                                                <i class="bi bi-unlock-fill"></i> Mở khóa
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-outline-warning btn-sm rounded-3" onclick="return confirm('Bạn có chắc chắn muốn khóa tài khoản này không?')">
+                                                <i class="bi bi-lock-fill"></i> Khóa tài khoản
+                                            </button>
+                                        }
+                                    </form>
+
+                                    <!-- Delete button -->
+                                    <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-3" onclick="return confirm('HÀNH ĐỘNG NÀY KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này không?')">
+                                            <i class="bi bi-trash-fill"></i> Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
