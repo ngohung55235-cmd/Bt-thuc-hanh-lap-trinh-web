@@ -1,0 +1,128 @@
+@model NgoManhHung_Tuan345.Models.Order
+@{
+    ViewData["Title"] = "Thanh toán";
+    var sessionCart = Context.Session.GetObjectFromJson<ShoppingCart>("Cart");
+    var totalAmount = sessionCart?.GetTotal() ?? 0;
+}
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="ShoppingCart" asp-action="Index">Giỏ hàng</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
+        </ol>
+    </nav>
+
+    <h1 class="h2 fw-bold mb-4 text-dark"><i class="bi bi-credit-card-2-front text-primary me-2"></i>Thanh toán</h1>
+
+    <div class="row g-4">
+        <!-- Form Column -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Thông tin giao hàng</h5>
+                
+                <form asp-controller="ShoppingCart" asp-action="Checkout" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="ShippingAddress" class="form-label fw-semibold text-secondary">Địa chỉ giao hàng</label>
+                        <textarea asp-for="ShippingAddress" class="form-control rounded-3 border-light-subtle shadow-xs" 
+                                  placeholder="Nhập số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..." rows="3"></textarea>
+                        <span asp-validation-for="ShippingAddress" class="text-danger fs-8 mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label fw-semibold text-secondary">Ghi chú (Tùy chọn)</label>
+                        <textarea asp-for="Notes" class="form-control rounded-3 border-light-subtle shadow-xs" 
+                                  placeholder="Ghi chú thêm về thời gian giao hàng, chỉ dẫn đường đi..." rows="3"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger fs-8 mt-1 d-block"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm transition-all hover-elevate mt-3">
+                        <i class="bi bi-bag-check-fill me-2 fs-5"></i>Xác nhận đặt hàng
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary Column -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-light">
+                <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Đơn hàng của bạn</h5>
+                
+                @if (sessionCart != null && sessionCart.Items.Any())
+                {
+                    <div class="mb-4 overflow-auto" style="max-height: 300px;">
+                        @foreach (var item in sessionCart.Items)
+                        {
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-2 overflow-hidden border bg-white flex-shrink-0" style="width: 50px; height: 50px; position: relative;">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl" class="w-100 h-100 object-fit-cover" alt="@item.Name" />
+                                        }
+                                        else
+                                        {
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                                <i class="bi bi-image" style="font-size: 0.8rem;"></i>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="fw-bold text-dark mb-0 fs-7 text-truncate" style="max-width: 200px;">@item.Name</h6>
+                                        <span class="text-muted fs-8">SL: @item.Quantity</span>
+                                    </div>
+                                </div>
+                                <span class="fw-semibold text-dark fs-7">
+                                    @((item.Price * item.Quantity).ToString("#,##0")) đ
+                                </span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2 fs-7">
+                        <span class="text-secondary">Tạm tính</span>
+                        <span class="fw-semibold text-dark">@totalAmount.ToString("#,##0") đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 fs-7">
+                        <span class="text-secondary">Vận chuyển</span>
+                        <span class="text-success fw-semibold">Miễn phí</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-dark">Tổng tiền thanh toán</span>
+                        <span class="h4 fw-bold text-primary mb-0">@totalAmount.ToString("#,##0") đ</span>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center mb-0">Không có sản phẩm nào trong giỏ.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    .fs-7 {
+        font-size: 0.9rem;
+    }
+    .fs-8 {
+        font-size: 0.8rem;
+    }
+    .hover-elevate:hover {
+        transform: translateY(-2px);
+    }
+    .transition-all {
+        transition: all 0.2s ease-in-out;
+    }
+    .shadow-xs {
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+</style>

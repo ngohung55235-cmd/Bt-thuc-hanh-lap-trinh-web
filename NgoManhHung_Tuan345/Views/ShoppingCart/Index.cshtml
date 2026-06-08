@@ -1,0 +1,180 @@
+@model NgoManhHung_Tuan345.Models.ShoppingCart
+@{
+    ViewData["Title"] = "Giỏ Hàng Của Bạn";
+}
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Giỏ hàng</li>
+        </ol>
+    </nav>
+
+    <h1 class="h2 fw-bold mb-4 text-dark"><i class="bi bi-cart3 text-primary me-2"></i>Giỏ hàng của bạn</h1>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-light">
+            <div class="py-4">
+                <i class="bi bi-cart-x text-muted display-1 mb-4"></i>
+                <h3 class="fw-bold text-secondary">Giỏ hàng trống!</h3>
+                <p class="text-muted mb-4">Hãy thêm các sản phẩm tuyệt vời của chúng tôi vào giỏ hàng của bạn.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm transition-all hover-elevate">Quay lại mua sắm</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <!-- Items Column -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead class="bg-light text-secondary">
+                                <tr>
+                                    <th scope="col" class="py-3 ps-4">Sản phẩm</th>
+                                    <th scope="col" class="py-3 text-center">Số lượng</th>
+                                    <th scope="col" class="py-3 text-end">Giá</th>
+                                    <th scope="col" class="py-3 text-end">Tổng cộng</th>
+                                    <th scope="col" class="py-3 text-center pe-4">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr class="border-bottom">
+                                        <!-- Product info -->
+                                        <td class="py-4 ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="rounded-3 overflow-hidden border bg-light flex-shrink-0" style="width: 70px; height: 70px; position: relative;">
+                                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                                    {
+                                                        <img src="@item.ImageUrl" class="w-100 h-100 object-fit-cover" alt="@item.Name" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                                            <i class="bi bi-image"></i>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h6 class="fw-bold text-dark mb-0">@item.Name</h6>
+                                                    <span class="text-muted fs-8">Mã sản phẩm: #@item.ProductId</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <!-- Quantity -->
+                                        <td class="py-4 text-center">
+                                            <form asp-controller="ShoppingCart" asp-action="UpdateQuantity" method="post" class="d-inline-flex justify-content-center align-items-center border rounded-pill p-1 bg-light">
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <button type="button" class="btn btn-sm btn-link text-decoration-none px-2 py-0 text-secondary" 
+                                                        onclick="decrementQty(this)">
+                                                    <i class="bi bi-dash-lg"></i>
+                                                </button>
+                                                <input type="number" name="quantity" value="@item.Quantity" 
+                                                       class="form-control form-control-sm text-center border-0 bg-transparent fw-bold" 
+                                                       style="width: 45px; pointer-events: none;" min="1" />
+                                                <button type="button" class="btn btn-sm btn-link text-decoration-none px-2 py-0 text-secondary" 
+                                                        onclick="incrementQty(this)">
+                                                    <i class="bi bi-plus-lg"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <!-- Price -->
+                                        <td class="py-4 text-end text-dark fw-medium">
+                                            @item.Price.ToString("#,##0") đ
+                                        </td>
+                                        <!-- Total -->
+                                        <td class="py-4 text-end text-primary fw-bold">
+                                            @((item.Price * item.Quantity).ToString("#,##0")) đ
+                                        </td>
+                                        <!-- Action -->
+                                        <td class="py-4 text-center pe-4">
+                                            <a asp-controller="ShoppingCart" asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" 
+                                               class="btn btn-outline-danger btn-sm rounded-circle p-2" title="Xóa khỏi giỏ hàng">
+                                                <i class="bi bi-trash3"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <a asp-controller="Home" asp-action="Index" class="btn btn-link text-decoration-none fw-semibold text-primary ps-0">
+                    <i class="bi bi-arrow-left me-2"></i>Tiếp tục mua sắm
+                </a>
+            </div>
+
+            <!-- Summary Column -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4" style="background: #ffffff;">
+                    <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom">Tóm tắt đơn hàng</h5>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Tạm tính</span>
+                        <span class="fw-semibold text-dark">@Model.GetTotal().ToString("#,##0") đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Phí vận chuyển</span>
+                        <span class="text-success fw-semibold">Miễn phí</span>
+                    </div>
+                    <hr class="my-3" />
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold text-dark">Tổng cộng</span>
+                        <span class="h4 fw-bold text-primary mb-0">@Model.GetTotal().ToString("#,##0") đ</span>
+                    </div>
+
+                    <a asp-controller="ShoppingCart" asp-action="Checkout" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm transition-all hover-elevate">
+                        Tiến hành thanh toán<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function incrementQty(button) {
+            var form = button.closest('form');
+            var input = form.querySelector('input[name="quantity"]');
+            input.value = parseInt(input.value) + 1;
+            form.submit();
+        }
+
+        function decrementQty(button) {
+            var form = button.closest('form');
+            var input = form.querySelector('input[name="quantity"]');
+            var currentVal = parseInt(input.value);
+            if (currentVal > 1) {
+                input.value = currentVal - 1;
+                form.submit();
+            }
+        }
+    </script>
+}
+
+<style>
+    .fs-8 {
+        font-size: 0.8rem;
+    }
+    .hover-elevate:hover {
+        transform: translateY(-2px);
+    }
+    .transition-all {
+        transition: all 0.2s ease-in-out;
+    }
+    /* Hide input number arrows */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>

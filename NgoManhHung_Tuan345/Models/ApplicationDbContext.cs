@@ -12,6 +12,8 @@ namespace NgoManhHung_Tuan345.Models
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +22,14 @@ namespace NgoManhHung_Tuan345.Models
             // Configure decimal precision for product price to prevent warnings
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalPrice)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<OrderDetail>()
+                .Property(od => od.Price)
                 .HasColumnType("decimal(18,2)");
 
             // Configure DeleteBehavior.SetNull when a Category is deleted
