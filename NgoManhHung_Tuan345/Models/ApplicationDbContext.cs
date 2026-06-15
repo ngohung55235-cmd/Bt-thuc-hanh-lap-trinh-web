@@ -19,6 +19,11 @@ namespace NgoManhHung_Tuan345.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure ApplicationUser Initials max length
+            modelBuilder.Entity<ApplicationUser>()
+                .Property(u => u.Initials)
+                .HasMaxLength(5);
+
             // Configure decimal precision for product price to prevent warnings
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)

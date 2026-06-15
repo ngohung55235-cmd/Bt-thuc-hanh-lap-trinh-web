@@ -12,5 +12,7 @@ namespace NgoManhHung_Tuan345.Models
         public string? Address { get; set; }
 
         public string? Age { get; set; }
+
+        public string? Initials { get; set; }
     }
 }
